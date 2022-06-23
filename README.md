@@ -11,13 +11,13 @@ So, when we have ready .json file from other projects we should convert them.
 And sometimes we need to convert files on other direction.
 
 Script accepts 3 arguments:
---jsonToArb
---arbToJson
---dir "path_to_the_folder_with_files"
+- `--jsonToArb`
+- `--arbToJson`
+- `--dir "path_to_the_folder_with_files"`
 
 and convert all files in the given directory.
 
---jsonToArb or --arbToJson, not together.
+`--jsonToArb` or `--arbToJson`, not together.
 
 Command to run the script
 
