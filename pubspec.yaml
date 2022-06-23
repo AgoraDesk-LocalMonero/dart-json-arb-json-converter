@@ -1,7 +1,7 @@
 name: dart_json_arb_json_converter
 description: Convert json keys to arb notations and backward.
 version: 0.0.1
-homepage:
+homepage: https://github.com/AgoraDesk-LocalMonero/dart-json-arb-json-converter
 
 environment:
   sdk: '>=2.17.1 <3.0.0'
