@@ -20,6 +20,7 @@ and convert all files in the given directory.
 --jsonToArb or --arbToJson, not together.
 
 Command to run the script
+
 ```dart bin/dart_json_arb_json_converter.dart --arbToJson --dir "path_to_the_folder_with_files"```
 
 ## Credits
