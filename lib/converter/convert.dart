@@ -35,7 +35,7 @@ void convert(ArgResults argResults) async {
                   }
                   final firstLetterInt = int.tryParse(k[0]);
                   if (firstLetterInt != null) {
-                    newKey = newKey.replaceFirst(k[0], 'num\$${k[0]}');
+                    newKey = newKey.replaceFirst(k[0], 'num__${k[0]}');
                   }
                   arbMap[newKey] = resMap[k];
                 }
@@ -51,7 +51,7 @@ void convert(ArgResults argResults) async {
                     for (final l in _replacementList) {
                       newKey = newKey.replaceAll(l[1], l[0]);
                     }
-                    newKey = newKey.replaceAll('num\$', '');
+                    newKey = newKey.replaceAll('num__', '');
                     arbMap[newKey] = resMap[k];
                   }
                 }
@@ -78,11 +78,11 @@ Future<List<FileSystemEntity>> _dirContents(Directory dir) {
 enum ErrorType { noParameters, noFiles }
 
 const _replacementList = [
-  ['.', '250\$'],
-  ['-', '8722\$'],
-  [':', '58\$'],
-  ['&', '38\$'],
-  ['/', '57\$'],
+  ['.', '_250_'],
+  ['-', '_8722_'],
+  [':', '_58_'],
+  ['&', '_38_'],
+  ['/', '_57_'],
 ];
 
 Future<Map<String, dynamic>> _readFile(String filePath) async {
