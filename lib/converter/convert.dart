@@ -35,9 +35,11 @@ void convert(ArgResults argResults) async {
                   }
                   final firstLetterInt = int.tryParse(k[0]);
                   if (firstLetterInt != null) {
-                    newKey = newKey.replaceFirst(k[0], 'num__${k[0]}');
+                    newKey = newKey.replaceFirst(k[0], 'numSb${k[0]}');
                   }
-                  arbMap[newKey] = resMap[k];
+                  // arbMap[newKey] = resMap[k];
+                  /// AgoraDesk uses name FRONT_TYPE in json - here we handle it
+                  arbMap[newKey] = resMap[k].replaceAll('FRONT_TYPE', '{appName}');
                 }
                 await _writeToFile(arbMap, file.path.replaceAll('.json', '.arb'));
               }
@@ -51,8 +53,10 @@ void convert(ArgResults argResults) async {
                     for (final l in _replacementList) {
                       newKey = newKey.replaceAll(l[1], l[0]);
                     }
-                    newKey = newKey.replaceAll('num__', '');
-                    arbMap[newKey] = resMap[k];
+                    newKey = newKey.replaceAll('numSb', '');
+                    // arbMap[newKey] = resMap[k];
+                    /// AgoraDesk uses name FRONT_TYPE in json - here we handle it
+                    arbMap[newKey] = resMap[k].replaceAll('{appName}', 'FRONT_TYPE');
                   }
                 }
                 await _writeToFile(arbMap, file.path.replaceAll('.arb', '.json'));
@@ -78,11 +82,11 @@ Future<List<FileSystemEntity>> _dirContents(Directory dir) {
 enum ErrorType { noParameters, noFiles }
 
 const _replacementList = [
-  ['.', '_250_'],
-  ['-', '_8722_'],
-  [':', '_58_'],
-  ['&', '_38_'],
-  ['/', '_57_'],
+  ['.', '250Sb'],
+  ['-', '8722Sb'],
+  [':', '58Sb'],
+  ['&', '38Sb'],
+  ['/', '57Sb'],
 ];
 
 Future<Map<String, dynamic>> _readFile(String filePath) async {
