@@ -39,10 +39,13 @@ void convert(ArgResults argResults) async {
                   if (firstLetterInt != null) {
                     newKey = newKey.replaceFirst(k[0], 'numSb${k[0]}');
                   }
-                  // arbMap[newKey] = resMap[k];
-                  /// AgoraDesk uses name FRONT_TYPE in json - here we handle it
-                  arbMap[newKey] =
-                      resMap[k].replaceAll('FRONT_TYPE', '{appName}');
+                  ///
+                  /// Inside lang strings occurs values like {name-one}
+                  /// We have to change their names to the {nameOne} according
+                  /// the Dart notations.
+                  ///
+
+                  arbMap[newKey] = _changePlaceHoldersNames(resMap[k]);
                 }
                 await _writeToFile(
                     arbMap, file.path.replaceAll('.json', '.arb'));
@@ -59,12 +62,7 @@ void convert(ArgResults argResults) async {
                     }
                     newKey = newKey.replaceAll('numSb', '');
 
-                    ///
-                    /// Inside lang strings occurs values like {name-one}
-                    /// We have to change their names to the {nameOne} according
-                    /// the Dart notations.
-                    ///
-
+                    //TODO: implement backward convert if needed
                     arbMap[newKey] = _changePlaceHoldersNames(resMap[k]);
                   }
                 }
@@ -93,6 +91,7 @@ String _changePlaceHoldersNames(String str) {
   String res2 = res;
   for (final p in placeholders) {
     if (p.contains('-')) {
+      print('+++++++++++++++++ $p');
       final int index = p.indexOf('-');
       print(index);
       String newPlaceholder = p.replaceRange(
