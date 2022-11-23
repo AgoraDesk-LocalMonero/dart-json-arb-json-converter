@@ -10,11 +10,13 @@ const kDir = 'dir';
 
 void convert(ArgResults argResults) async {
   List<String> paths = argResults.rest;
-  stderr.writeln('working directory - ${argResults.rest}');
-  if (paths.isEmpty || (argResults.arguments.isEmpty) || (argResults.arguments.length != 3)) {
+  stderr.writeln('working directory - ${argResults.arguments}');
+  if (paths.isEmpty || (argResults.arguments.isEmpty) ||
+      (argResults.arguments.length != 3)) {
     _printErrors(ErrorType.noParameters);
   } else {
-    final List<FileSystemEntity> files = await _dirContents(Directory(paths[0]));
+    final List<FileSystemEntity> files = await _dirContents(
+        Directory(paths[0]));
     if (files.isEmpty) {
       _printErrors(ErrorType.noFiles);
     } else {
@@ -39,9 +41,11 @@ void convert(ArgResults argResults) async {
                   }
                   // arbMap[newKey] = resMap[k];
                   /// AgoraDesk uses name FRONT_TYPE in json - here we handle it
-                  arbMap[newKey] = resMap[k].replaceAll('FRONT_TYPE', '{appName}');
+                  arbMap[newKey] =
+                      resMap[k].replaceAll('FRONT_TYPE', '{appName}');
                 }
-                await _writeToFile(arbMap, file.path.replaceAll('.json', '.arb'));
+                await _writeToFile(
+                    arbMap, file.path.replaceAll('.json', '.arb'));
               }
             } else {
               /// arb => json
@@ -54,12 +58,18 @@ void convert(ArgResults argResults) async {
                       newKey = newKey.replaceAll(l[1], l[0]);
                     }
                     newKey = newKey.replaceAll('numSb', '');
-                    // arbMap[newKey] = resMap[k];
-                    /// AgoraDesk uses name FRONT_TYPE in json - here we handle it
-                    arbMap[newKey] = resMap[k].replaceAll('{appName}', 'FRONT_TYPE');
+
+                    ///
+                    /// Inside lang strings occurs values like {name-one}
+                    /// We have to change their names to the {nameOne} according
+                    /// the Dart notations.
+                    ///
+
+                    arbMap[newKey] = _changePlaceHoldersNames(resMap[k]);
                   }
                 }
-                await _writeToFile(arbMap, file.path.replaceAll('.arb', '.json'));
+                await _writeToFile(
+                    arbMap, file.path.replaceAll('.arb', '.json'));
               }
             }
           }
@@ -71,11 +81,35 @@ void convert(ArgResults argResults) async {
   }
 }
 
+String _changePlaceHoldersNames(String str) {
+  String res = str.replaceAll('{appName}', 'FRONT_TYPE');
+  List<Match> openedBracesPositions = '{'.allMatches(str).toList();
+  List<Match> closedBracesPositions = '}'.allMatches(str).toList();
+  List<String> placeholders = [];
+  for (int i = 0; i < openedBracesPositions.length; i++) {
+    placeholders.add(str.substring(
+        openedBracesPositions[i].start + 1, closedBracesPositions[i].start));
+  }
+  String res2 = res;
+  for (final p in placeholders) {
+    if (p.contains('-')) {
+      final int index = p.indexOf('-');
+      print(index);
+      String newPlaceholder = p.replaceRange(
+          index+1, index+2 , p.substring(index+1, index + 2).toUpperCase());
+      newPlaceholder = newPlaceholder.replaceAll('-', '');
+      res2 = res2.replaceAll(p, newPlaceholder);
+    }
+  }
+  return res2;
+}
+
 Future<List<FileSystemEntity>> _dirContents(Directory dir) {
   var files = <FileSystemEntity>[];
   var completer = Completer<List<FileSystemEntity>>();
   var lister = dir.list(recursive: false);
-  lister.listen((file) => files.add(file), onDone: () => completer.complete(files));
+  lister.listen((file) => files.add(file),
+      onDone: () => completer.complete(files));
   return completer.future;
 }
 
